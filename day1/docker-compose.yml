@@ -1,0 +1,14 @@
+# Lab 1.2b — Docker Compose: çoklu container
+services:
+  web:
+    image: nginx:1.25
+    ports:
+      - "8080:80"
+    depends_on:
+      - cache
+    environment:
+      - REDIS_HOST=cache
+
+  cache:
+    image: redis:7-alpine
+    # 🔐 Port dışarıya publish EDİLMEDİ: Redis'e sadece compose ağındaki web erişebilir

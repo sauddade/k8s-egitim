@@ -1,0 +1,5 @@
+# Lab 3.1 — podinfo Helm chart için values (v2 — upgrade)
+replicaCount: 3
+ui:
+  message: "Merhaba K8s Egitimi - v2 (upgrade)"
+  color: "#2e7d32"

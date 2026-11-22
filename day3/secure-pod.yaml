@@ -1,0 +1,28 @@
+# Lab 3.9 — 🔐 Pod Security Admission "restricted" profiline uygun sıkılaştırılmış pod
+# Önce: psa-demo namespace'i restricted label'larıyla oluşturulmuş olmalı (kılavuz Lab 3.9)
+apiVersion: v1
+kind: Pod
+metadata:
+  name: secure-app
+  namespace: psa-demo
+spec:
+  automountServiceAccountToken: false     # API'ye ihtiyacı yok → token yok
+  securityContext:
+    runAsNonRoot: true                     # root ile başlamayı reddet
+    runAsUser: 10001
+    seccompProfile:
+      type: RuntimeDefault                 # tehlikeli syscall'ları filtrele
+  containers:
+  - name: app
+    image: k8s-demo-app:v1
+    imagePullPolicy: IfNotPresent
+    ports:
+    - containerPort: 5000
+    securityContext:
+      allowPrivilegeEscalation: false      # setuid ile yetki yükseltme yok
+      readOnlyRootFilesystem: true         # dosya sistemine yazılamaz
+      capabilities:
+        drop: ["ALL"]                      # tüm Linux capability'leri kaldır
+    resources:
+      requests: {cpu: 50m, memory: 64Mi}
+      limits: {cpu: 200m, memory: 128Mi}

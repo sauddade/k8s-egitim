@@ -1,0 +1,16 @@
+# 🔐 Lab sırasında üretilen özel anahtar / sertifika dosyaları ASLA commit edilmez
+*.key
+*.csr
+*.crt
+*.pem
+day2/ayse-csr.yaml
+
+# Lab sırasında üretilen dosyalar
+day3/podinfo-default-values.yaml
+day3/my-first-chart/
+__pycache__/
+*.pyc
+
+# İşletim sistemi / editör
+.DS_Store
+Thumbs.db

@@ -1,0 +1,10 @@
+# Lab 2.7 — Adım 2: netpol-demo namespace'inde tüm gelen trafiği kapat
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-ingress
+  namespace: netpol-demo
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress

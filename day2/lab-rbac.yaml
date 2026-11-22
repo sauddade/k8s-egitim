@@ -1,0 +1,27 @@
+# Lab 2.11 — Adım 5: lab-sa için salt-okunur Role + RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: day2-lab
+  name: lab-role
+rules:
+- apiGroups: [""]
+  resources: ["pods", "pods/log", "services", "configmaps"]
+  verbs: ["get", "list", "watch"]
+- apiGroups: ["apps"]
+  resources: ["deployments"]
+  verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: lab-sa-binding
+  namespace: day2-lab
+subjects:
+- kind: ServiceAccount
+  name: lab-sa
+  namespace: day2-lab
+roleRef:
+  kind: Role
+  name: lab-role
+  apiGroup: rbac.authorization.k8s.io

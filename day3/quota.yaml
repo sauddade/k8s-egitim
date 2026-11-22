@@ -1,0 +1,30 @@
+# Lab 3.5b — 🔐 ResourceQuota + LimitRange (DoS / cryptojacking etki alanını sınırlama)
+# Önce: kubectl create namespace quota-demo
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: team-quota
+  namespace: quota-demo
+spec:
+  hard:
+    pods: "4"
+    requests.cpu: "1"
+    requests.memory: 1Gi
+    limits.memory: 2Gi
+---
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: default-limits
+  namespace: quota-demo
+spec:
+  limits:
+  - type: Container
+    default:            # limit yazılmazsa bu uygulanır
+      cpu: 200m
+      memory: 256Mi
+    defaultRequest:     # request yazılmazsa bu uygulanır
+      cpu: 100m
+      memory: 128Mi
+    max:
+      memory: 512Mi

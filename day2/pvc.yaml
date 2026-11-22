@@ -1,0 +1,12 @@
+# Lab 2.9 — Dinamik provisioning: PVC → StorageClass (standard) → otomatik PV
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: data-pvc
+spec:
+  accessModes:
+  - ReadWriteOnce
+  storageClassName: standard
+  resources:
+    requests:
+      storage: 1Gi

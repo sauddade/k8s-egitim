@@ -1,0 +1,11 @@
+# Lab 3.1 — podinfo Helm chart için values (v1)
+replicaCount: 2
+ui:
+  message: "Merhaba K8s Egitimi - v1"
+  color: "#34577c"
+resources:
+  requests:
+    cpu: 10m
+    memory: 32Mi
+  limits:
+    memory: 128Mi

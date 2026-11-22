@@ -1,0 +1,7 @@
+# Lab 1.2c — 🔐 KASITLI OLARAK GÜVENSİZ: imaj katmanlarında sır sızıntısını göstermek içindir.
+# Gerçek projelerde böyle yazmayın (BuildKit secret mount veya runtime Secret kullanın).
+FROM busybox:1.36
+ARG DB_PASSWORD=Sifre123!
+ENV API_TOKEN=tok_live_abc123
+RUN echo "db sifresi kullaniliyor: $DB_PASSWORD" > /tmp/x && rm /tmp/x
+CMD ["sh"]

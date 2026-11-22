@@ -1,0 +1,12 @@
+# Lab 2.10 — app-sa kimliğiyle çalışan test pod'u (token otomatik mount edilir)
+apiVersion: v1
+kind: Pod
+metadata:
+  name: rbac-test
+  namespace: rbac-demo
+spec:
+  serviceAccountName: app-sa
+  containers:
+  - name: client
+    image: nicolaka/netshoot:v0.13
+    command: ["sleep", "3600"]

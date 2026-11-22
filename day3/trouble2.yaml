@@ -1,0 +1,13 @@
+# Lab 3.8 — Troubleshooting: karşılanamayacak kaynak isteği → Pending / FailedScheduling
+apiVersion: v1
+kind: Pod
+metadata:
+  name: trouble2
+spec:
+  containers:
+  - name: nginx
+    image: nginx:1.25
+    resources:
+      requests:
+        cpu: 100
+        memory: 256Gi

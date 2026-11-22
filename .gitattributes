@@ -1,0 +1,2 @@
+# Windows'ta klonlansa bile script'ler ve YAML'lar LF satır sonu ile kalsın (CRLF bash script'lerini bozar)
+* text=auto eol=lf

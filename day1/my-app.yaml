@@ -1,0 +1,36 @@
+# Lab 1.10 — Gün 1 entegre uygulama
+# Önce: kubectl create configmap app-config ... ve kubectl create secret generic app-secret ...
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-web-app
+  labels:
+    app: my-web
+    tier: frontend
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: my-web
+  template:
+    metadata:
+      labels:
+        app: my-web
+        tier: frontend
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.25
+        ports:
+        - containerPort: 80
+        env:
+        - name: BG_COLOR
+          valueFrom:
+            configMapKeyRef:
+              name: app-config
+              key: BG_COLOR
+        - name: API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: app-secret
+              key: API_KEY

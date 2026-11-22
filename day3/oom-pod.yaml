@@ -1,0 +1,16 @@
+# Lab 3.5 — Memory limit aşımı → OOMKilled
+apiVersion: v1
+kind: Pod
+metadata:
+  name: oom-pod
+spec:
+  containers:
+  - name: memory-hog
+    image: python:3.11-slim
+    # 300 MB bellek ayırıp doldurur — limit 128Mi
+    command: ["python", "-c", "x = b'a' * (300 * 1024 * 1024); import time; time.sleep(3600)"]
+    resources:
+      requests:
+        memory: 64Mi
+      limits:
+        memory: 128Mi

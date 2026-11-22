@@ -1,0 +1,16 @@
+# Lab 2.9 — PVC'yi pod'a bağla; pod silinip yeniden oluşturulunca veri kalır
+apiVersion: v1
+kind: Pod
+metadata:
+  name: db-pod
+spec:
+  containers:
+  - name: redis
+    image: redis:7-alpine
+    volumeMounts:
+    - name: data
+      mountPath: /data
+  volumes:
+  - name: data
+    persistentVolumeClaim:
+      claimName: data-pvc

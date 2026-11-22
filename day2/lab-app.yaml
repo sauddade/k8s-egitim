@@ -1,0 +1,56 @@
+# Lab 2.11 — Gün 2 entegre uygulama: ConfigMap + PVC + Deployment
+# Önce: kubectl create namespace day2-lab && kubectl create serviceaccount lab-sa -n day2-lab
+#       kubectl config set-context --current --namespace=day2-lab
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+data:
+  app.properties: |
+    color=blue
+    mode=production
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: app-data
+spec:
+  accessModes: [ReadWriteOnce]
+  storageClassName: standard
+  resources:
+    requests:
+      storage: 500Mi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lab-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: lab-app
+  template:
+    metadata:
+      labels:
+        app: lab-app
+    spec:
+      serviceAccountName: lab-sa
+      containers:
+      - name: nginx
+        image: nginx:1.25
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: config
+          mountPath: /etc/app
+          readOnly: true
+        - name: data
+          mountPath: /data
+      volumes:
+      - name: config
+        configMap:
+          name: app-config
+      - name: data
+        persistentVolumeClaim:
+          claimName: app-data

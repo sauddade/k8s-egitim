@@ -1,0 +1,73 @@
+# Lab 2.11 — Adım 4: Sıfır güven NetworkPolicy seti
+# 1) Namespace'te varsayılan: her şey kapalı (ingress + egress)
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-all
+  namespace: day2-lab
+spec:
+  podSelector: {}
+  policyTypes: [Ingress, Egress]
+---
+# 2) Tüm pod'lar DNS'e çıkabilir
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-dns
+  namespace: day2-lab
+spec:
+  podSelector: {}
+  policyTypes: [Egress]
+  egress:
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: kube-system
+      podSelector:
+        matchLabels:
+          k8s-app: kube-dns
+    ports:
+    - protocol: UDP
+      port: 53
+    - protocol: TCP
+      port: 53
+---
+# 3) lab-app'e sadece role=client pod'ları 80/TCP ile gelebilir
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: lab-app-from-client
+  namespace: day2-lab
+spec:
+  podSelector:
+    matchLabels:
+      app: lab-app
+  policyTypes: [Ingress]
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          role: client
+    ports:
+    - protocol: TCP
+      port: 80
+---
+# 4) client sadece lab-app'e çıkabilir
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: client-to-lab-app
+  namespace: day2-lab
+spec:
+  podSelector:
+    matchLabels:
+      role: client
+  policyTypes: [Egress]
+  egress:
+  - to:
+    - podSelector:
+        matchLabels:
+          app: lab-app
+    ports:
+    - protocol: TCP
+      port: 80

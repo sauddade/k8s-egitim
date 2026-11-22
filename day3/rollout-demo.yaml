@@ -1,0 +1,42 @@
+# Lab 3.3 — Rolling update + readiness/liveness probe'ları
+# Önce: bash scripts/build-demo-images.sh  (k8s-demo-app:v1, v2, v3-bad)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rollout-demo
+  annotations:
+    kubernetes.io/change-cause: "v1: ilk kurulum"
+spec:
+  replicas: 4
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1          # en fazla 1 fazla pod
+      maxUnavailable: 0    # hiçbir an kapasite düşmesin
+  selector:
+    matchLabels:
+      app: rollout-demo
+  template:
+    metadata:
+      labels:
+        app: rollout-demo
+    spec:
+      containers:
+      - name: app
+        image: k8s-demo-app:v1
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 5000
+        readinessProbe:          # "trafik almaya hazır mı?" → değilse Service endpoint'inden çıkarılır
+          httpGet:
+            path: /health
+            port: 5000
+          initialDelaySeconds: 2
+          periodSeconds: 3
+        livenessProbe:           # "canlı mı?" → değilse container yeniden başlatılır
+          httpGet:
+            path: /health
+            port: 5000
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          failureThreshold: 3
