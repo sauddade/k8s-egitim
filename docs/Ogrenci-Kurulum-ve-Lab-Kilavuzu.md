@@ -9,7 +9,7 @@ Bu doküman katılımcıların eğitim öncesi ortam kurulumu ve eğitim sıras�
 > **📁 Lab dosyaları:** Tüm lab dosyaları (YAML, Dockerfile, script) eğitim deposundadır. Ortamınızı kurduktan sonra depoyu **tam olarak `~/k8s-lab` klasörüne** klonlayın — kılavuzdaki tüm `cd ~/k8s-lab/...` komutları bu yola göre yazılmıştır:
 >
 > ```bash
-> git clone https://github.com/<KULLANICI_ADI>/k8s-egitim.git ~/k8s-lab
+> git clone https://github.com/sauddade/k8s-egitim.git ~/k8s-lab
 > ```
 >
 > Kılavuzdaki `cat > dosya.yaml << 'EOF'` blokları depodaki dosyalarla birebir aynıdır; isterseniz bloğu çalıştırın, isterseniz doğrudan depodaki dosyayı kullanın. PDF/Word'den kopyalarken YAML girintileri bozulabileceği için depodaki dosyalar tercih edilir.
