@@ -14,7 +14,7 @@
 2. Depoyu **tam olarak `~/k8s-lab` klasörüne** klonlayın — kılavuzdaki tüm `cd ~/k8s-lab/...` komutları bu yola göre yazılmıştır:
 
    ```bash
-   git clone https://github.com/<KULLANICI_ADI>/k8s-egitim.git ~/k8s-lab
+   git clone https://github.com/sauddade/k8s-egitim.git ~/k8s-lab
    cd ~/k8s-lab
    ```
 
