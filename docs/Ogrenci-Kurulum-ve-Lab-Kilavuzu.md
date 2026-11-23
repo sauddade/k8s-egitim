@@ -38,7 +38,7 @@ Bu doküman katılımcıların eğitim öncesi ortam kurulumu ve eğitim sıras�
 
 ## 1. KURULUM YOLUNU SEÇİN
 
-> **Amaç:** Herkes aynı komutları çalıştırabilsin. Hangi yolu seçerseniz seçin sonuçta elinizde şunlar olacak: **bash terminali + Docker (CLI + engine) + minikube + kubectl + helm**. Eğitimdeki tüm komutlar bu ortamda birebir çalışır.
+> **Amaç:** Herkes aynı komutları çalıştırabilsin. Seçilen yoldan baımsız olarak elinizde şunlar olacak: **bash terminali + Docker (CLI + engine) + minikube + kubectl + helm**. Eğitimdeki tüm komutlar bu ortamda birebir çalışır.
 
 ### 1.1 Önce Şirket Politikanızı Kontrol Edin
 
@@ -370,10 +370,8 @@ code --install-extension redhat.vscode-helm
 
 ## 5. YOL D — TARAYICI TABANLI ORTAM (GitHub Codespaces)
 
-> Yerel kurulum hiçbir şekilde mümkün değilse kullanılır. Sadece tarayıcı ve **kişisel** bir GitHub hesabı gerekir. Eğitmen, eğitim deposunu (`.devcontainer` yapılandırmasıyla) paylaşır; Docker, minikube, kubectl ve helm hazır gelir, cluster otomatik başlatılır.
-
 1. GitHub hesabınızla giriş yapın
-2. Eğitim deposunu açın (`https://github.com/<KULLANICI_ADI>/k8s-egitim`) → **Code** → **Codespaces** → **⋯ → New with options** → Machine type: **4-core** → **Create codespace**
+2. Eğitim deposunu açın (`https://github.com/sauddade/k8s-egitim`) → **Code** → **Codespaces** → **⋯ → New with options** → Machine type: **4-core** → **Create codespace**
 3. İlk açılış ~5–8 dk sürer (minikube otomatik başlar; `~/k8s-lab` depoya otomatik bağlanır)
 4. Terminalde doğrulayın: `kubectl get nodes`, ardından `bash scripts/preload-images.sh`
 
@@ -384,7 +382,6 @@ code --install-extension redhat.vscode-helm
 - `minikube service` ve `minikube tunnel` yerine her zaman `kubectl port-forward` kullanın
 - 🔐 Codespace'e şirket verisi veya kimlik bilgisi koymayın — sadece eğitim amaçlıdır
 
-> Acil yedek: Codespaces de kullanılamıyorsa Kubernetes lab'ları için eğitmen https://killercoda.com/playgrounds üzerindeki ücretsiz Kubernetes ortamını önerebilir (oturum süresi sınırlıdır, Docker lab'ları için uygun değildir).
 
 ---
 
@@ -435,8 +432,6 @@ minikube start     # ertesi sabah (önceki ayarlarla açılır)
 ---
 
 ## 7. KURULUM DOĞRULAMA
-
-> Eğitimden **en az 3 gün önce** bu script'i çalıştırın (depoda hazır: `bash ~/k8s-lab/scripts/verify-setup.sh`) ve çıktının ekran görüntüsünü eğitmene gönderin. Eğitmen, eğitimden yaklaşık 1 hafta önce 30–45 dk'lık online bir **"kurulum kontrol oturumu"** düzenler — sorun yaşayanlar bu oturuma katılır.
 
 ```bash
 echo "=== Docker ==="
@@ -1120,7 +1115,7 @@ kubectl delete pod bad-pod crash-pod
 
 ---
 
-### Lab 1.10 — Gün 1 Entegre Uygulama (40 dk)
+### Lab 1.10 — Gün 1 Entegre Uygulama 
 
 ```bash
 cd ~/k8s-lab/day1
@@ -2217,7 +2212,7 @@ kubectl delete namespace ctf
 
 ---
 
-### Lab 2.11 — Gün 2 Entegre Uygulama (55 dk)
+### Lab 2.11 — Gün 2 Entegre Uygulama
 
 ```bash
 cd ~/k8s-lab/day2
@@ -3108,9 +3103,8 @@ kubectl delete namespace psa-demo hostpath-demo
 
 ## 11. FİNAL SENARYOSU
 
-### Uçtan Uca Görev: "Güvenli Bir Uygulamayı Canlıya Al" (75 dk)
+### Uçtan Uca Görev: "Güvenli Bir Uygulamayı Canlıya Al" 
 
-> Bu sefer komutlar hazır verilmiyor — **görevler ve ipuçları** veriliyor. 3 günde yazdığınız YAML'ları (`~/k8s-lab/`) kopyalayıp uyarlayabilirsiniz; `kubectl explain` ve `kubectl create ... --dry-run=client -o yaml` en iyi yardımcılarınızdır. Takıldığınızda eğitmene sorun. **Çözüm dosyaları final sonunda paylaşılacak.**
 
 **Senaryo:** Şirketiniz `k8s-demo-app` uygulamasını Kubernetes'e taşıyor. Güvenlik ekibi olarak hem uygulamayı kurmanız hem de **en az yetki (least privilege)** ilkesine uygun olduğunu kanıtlamanız gerekiyor.
 
@@ -3118,13 +3112,13 @@ kubectl delete namespace psa-demo hostpath-demo
 mkdir -p ~/k8s-lab/final && cd ~/k8s-lab/final
 ```
 
-#### Görev 1 — Namespace ve Pod Security (5 dk)
+#### Görev 1 — Namespace ve Pod Security
 - `final-project` namespace'ini oluşturun
 - Pod Security label'ları: `enforce=baseline`, `warn=restricted`, `audit=restricted`
 - Aktif context'in namespace'ini `final-project` yapın
 > 💡 Lab 3.9 — `kubectl label namespace ...`
 
-#### Görev 2 — Kimlik (3 dk)
+#### Görev 2 — Kimlik 
 - `final-sa` ServiceAccount'u; token'ı **otomatik mount edilmesin**
 > 💡 ServiceAccount YAML'ında `automountServiceAccountToken: false`
 
@@ -3134,7 +3128,7 @@ mkdir -p ~/k8s-lab/final && cd ~/k8s-lab/final
 - PVC `app-data`: 1Gi, ReadWriteOnce, `standard`
 > 💡 Secret'ı `stringData:` ile yazarsanız base64'e çevirmeniz gerekmez
 
-#### Görev 4 — Deployment (15 dk)
+#### Görev 4 — Deployment 
 
 `final-app` Deployment'ı şu gereksinimleri karşılamalı:
 
@@ -3155,12 +3149,12 @@ mkdir -p ~/k8s-lab/final && cd ~/k8s-lab/final
 > 💡 Secret'ı dosya olarak mount ederken `defaultMode: 0440` kullanın (fsGroup sayesinde 10001 kullanıcısı okuyabilir).
 > ❓ Neden env değil dosya? Env değişkenleri `exec`, alt process'ler, crash dump'lar ve hatalı loglama ile sızar; dosya olarak verilen Secret güncellenebilir ve erişimi dosya izinleriyle sınırlanabilir.
 
-#### Görev 5 — Service + Ingress (7 dk)
+#### Görev 5 — Service + Ingress 
 - ClusterIP Service `final-svc`: port 80 → targetPort 5000
 - Ingress `final-ingress`: `ingressClassName: nginx`, host `final.local`, path `/` → `final-svc:80`
 > 💡 Test: `kubectl port-forward -n ingress-nginx svc/ingress-nginx-controller 8081:80` ve `curl -H "Host: final.local" http://localhost:8081`
 
-#### Görev 6 — Helm ile Yardımcı Servis (7 dk)
+#### Görev 6 — Helm ile Yardımcı Servis 
 - `podinfo/podinfo` chart'ını **`podinfo`** release adıyla, bir **values dosyası** ile kurun:
   - `ui.message`: kendi mesajınız
   - `redis.enabled: true`
@@ -3168,7 +3162,7 @@ mkdir -p ~/k8s-lab/final && cd ~/k8s-lab/final
 - Kurulum sırasında çıkan PodSecurity **uyarılarını not edin** — neden kurulum yine de başarılı oldu?
 > 💡 `kubectl get svc,pods --show-labels` ile Redis Service adını ve pod label'larını doğrulayın (NetworkPolicy için lazım olacak)
 
-#### Görev 7 — NetworkPolicy: Sıfır Güven (10 dk)
+#### Görev 7 — NetworkPolicy: Sıfır Güven 
 - Namespace'te varsayılan olarak **tüm ingress ve egress kapalı**
 - Tüm pod'lar DNS'e (kube-system / kube-dns, 53 UDP+TCP) çıkabilir
 - `final-app`'e **sadece `ingress-nginx` namespace'inden** 5000/TCP gelebilir
@@ -3176,19 +3170,19 @@ mkdir -p ~/k8s-lab/final && cd ~/k8s-lab/final
 - Hiçbir pod internete çıkamaz
 > 💡 Her namespace'in otomatik label'ı: `kubernetes.io/metadata.name: <ad>`
 
-#### Görev 8 — RBAC: Operatör Rolü (5 dk)
+#### Görev 8 — RBAC: Operatör Rolü 
 - `dev-team` grubu için `final-operator` Role + RoleBinding:
   - pod, pod log, service, configmap, event, pvc: **okuma**
   - deployment, replicaset: okuma; deployment: **patch/update** (rollout için)
   - **secrets YOK, pods/exec YOK, pods/portforward YOK**
 > 💡 Lab 2.10b — `subjects: - kind: Group`
 
-#### Görev 9 — Güncelleme ve Hatalı Sürümden Dönüş (8 dk)
+#### Görev 9 — Güncelleme ve Hatalı Sürümden Dönüş 
 - `v2`'ye güncelleyin, `change-cause` ekleyin
 - `v3-bad`'e güncelleyin → rollout'un takıldığını **ve kullanıcıların etkilenmediğini** gösterin
 - Rollback yapın (son durum: v2)
 
-#### Görev 10 — Güvenlik Denetimi: Kanıtlayın (10 dk)
+#### Görev 10 — Güvenlik Denetimi: Kanıtlayın 
 Aşağıdaki doğrulama komutlarını çalıştırın — **tüm beklenen sonuçları** almalısınız.
 
 ### Doğrulama Komutları
@@ -3287,7 +3281,6 @@ minikube stop
 
 ## EK: Hızlı Referans Kartı
 
-> Eğitim sırasında hızlı komut referansı — yazdırıp masaya koyabilirsiniz.
 
 ### Pod & Deployment
 ```bash
@@ -3378,8 +3371,6 @@ kubectl get secrets -A -l owner=helm                             # Helm release 
 ## EK: Lens
 
 ### Kubernetes GUI Aracı — Kurulum ve Kullanım
-
-> **Not:** Eğitimde kubectl ile çalışmaya devam edin. Lens, eğitim sonrası günlük operasyonda işinizi kolaylaştıracak opsiyonel bir araçtır. Eğitmen zaman kalırsa tanıtım yapacaktır.
 
 #### Lens Nedir?
 
@@ -3482,15 +3473,11 @@ kubectl delete svc lens-demo
 | Scripting/Otomasyon | Uygun | Değil |
 | Öğrenme | Dik eğri | Sezgisel |
 
-> **Öneri:** Eğitim boyunca kubectl kullanın — Kubernetes'in nasıl çalıştığını anlamak için şart. Lens, eğitimden sonra günlük operasyonda verimlilik için faydalıdır.
-
 ---
 
 ## EK: Troubleshooting
 
 ### Yaygın Sorunlar ve Teşhis Komutları
-
-> Eğitim sırasında veya sonrasında karşılaşabileceğin sorunlar için hızlı referans. Her senaryo için teşhis komutları ve çözüm ipuçları verilmiştir.
 
 ---
 
