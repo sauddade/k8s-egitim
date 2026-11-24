@@ -654,6 +654,7 @@ docker history k8s-demo-app:v1
 
 # Container çalıştır ve test et
 docker run -d --name demo-app -p 5000:5000 k8s-demo-app:v1
+# macOS: "address already in use" hatası → 5000 portunu AirPlay Receiver kullanıyor; -p 5050:5000 ile çalıştırıp localhost:5050'yi kullanın
 
 # Uygulamayı test et
 curl http://localhost:5000
@@ -1534,9 +1535,11 @@ kubectl run web-test --rm -i --restart=Never --image=nicolaka/netshoot:v0.13 -- 
 kubectl run ext-dns --rm -i --restart=Never --image=nicolaka/netshoot:v0.13 -- nslookup example.com
 # Çözümleniyorsa → CoreDNS ve CNI sağlıklı
 
-# 🔐 DNS keşif için de kullanılır: cluster içindeki bir saldırgan tüm Service'leri DNS ile bulabilir
+# 🔐 DNS keşif için de kullanılır: cluster içindeki bir saldırgan Service'leri ve portlarını DNS ile bulabilir
+# SRV kaydı sadece İSİMLİ portlar için oluşur (dns-test'in portu isimsiz). API Server Service'inin portu "https" adını taşır:
 kubectl run dns-recon --rm -i --restart=Never --image=nicolaka/netshoot:v0.13 -- \
-  dig +short SRV _http._tcp.dns-test.gun2.svc.cluster.local
+  dig +short SRV _https._tcp.kubernetes.default.svc.cluster.local
+# Örnek çıktı: 0 100 443 kubernetes.default.svc.cluster.local.  → servis adı + port numarası
 # Service adı/port bilgisi gizli değildir — güvenlik "gizliliğe" değil NetworkPolicy + kimlik doğrulamaya dayanmalı
 
 # Temizlik
@@ -1945,7 +1948,7 @@ kubectl delete -f headless-svc.yaml
 kubectl delete pvc -l app=db
 ```
 
-> **⚠️ StatefulSet ≠ Production Veritabanı:** StatefulSet yalnızca sabit isim, sabit disk ve sıralı başlatma sağlar; replikasyon, otomatik failover, yedek/PITR, sürüm yükseltme ve split-brain koruması **sağlamaz** (bu labdaki 3 Redis birbirinin kopyası değildir — `kubectl exec db-1 -- redis-cli GET mykey` boş döner). Node arızasında pod elle müdahale olmadan başka node'a taşınmaz, bulut diskleri tek zone'a bağlıdır, drain/autoscaler/OOMKill gibi olağan Kubernetes olayları DB için kesinti demektir. Güvenlik açısından DB, uygulamalarla aynı kernel/node saldırı yüzeyini paylaşır ve uyum (PCI-DSS/KVKK) kapsamı tüm cluster'a yayılabilir. **Öneri:** Production'da önce yönetilen DB (RDS, Cloud SQL, Azure Database); Kubernetes zorunluysa olgun bir Operator (CloudNativePG, Percona, Crunchy, Strimzi) + test edilmiş yedek/geri dönüş. Çıplak StatefulSet: dev/test, cache, yeniden üretilebilir veri.
+> **⚠️ StatefulSet ≠ Production Veritabanı:** StatefulSet yalnızca sabit isim, sabit disk ve sıralı başlatma sağlar; replikasyon, otomatik failover, yedek/PITR, sürüm yükseltme ve split-brain koruması **sağlamaz** (bu labdaki 3 Redis birbirinin kopyası değildir — db-0'a yazdığınız `pod0-verisi` db-1'de yoktur, db-1 sadece kendi `pod1-verisi`ni bilir; `kubectl exec db-2 -- redis-cli GET mykey` ise boş döner). Node arızasında pod elle müdahale olmadan başka node'a taşınmaz, bulut diskleri tek zone'a bağlıdır, drain/autoscaler/OOMKill gibi olağan Kubernetes olayları DB için kesinti demektir. Güvenlik açısından DB, uygulamalarla aynı kernel/node saldırı yüzeyini paylaşır ve uyum (PCI-DSS/KVKK) kapsamı tüm cluster'a yayılabilir. **Öneri:** Production'da önce yönetilen DB (RDS, Cloud SQL, Azure Database); Kubernetes zorunluysa olgun bir Operator (CloudNativePG, Percona, Crunchy, Strimzi) + test edilmiş yedek/geri dönüş. Çıplak StatefulSet: dev/test, cache, yeniden üretilebilir veri.
 
 ---
 
@@ -2165,7 +2168,7 @@ kubectl config current-context
 
 > 🔐 **Güvenlik notları**
 > - Kubernetes istemci sertifikaları **iptal edilemez** (CRL/OCSP yok). Sertifika sızarsa süresi dolana kadar geçerlidir → `expirationSeconds` kısa tutun; üretimde OIDC (SSO) tercih edin.
-> - `O=system:masters` içeren bir sertifika **RBAC'i tamamen atlar** (her zaman cluster-admin) ve iptal edilemez. CSR onaylarken mutlaka subject'i kontrol edin: `kubectl get csr <ad> -o jsonpath='{.spec.groups}'`
+> - `O=system:masters` içeren bir sertifika **RBAC'i tamamen atlar** (her zaman cluster-admin) ve iptal edilemez. CSR onaylarken sertifikanın içindeki subject'i (CN/O) kontrol edin: `kubectl get csr <ad> -o jsonpath='{.spec.request}' | base64 -d | openssl req -noout -subject` — `spec.groups` alanı sertifikanın değil, CSR'ı gönderen kullanıcının gruplarını gösterir.
 > - Yetkiyi kişilere değil **gruplara** verin; kişi ekipten ayrılınca IdP'den çıkarılması yeterli olsun.
 
 ```bash
@@ -2192,17 +2195,17 @@ kubectl create serviceaccount dev -n ctf
 kubectl create role pod-creator -n ctf --verb=create,get,list --resource=pods,pods/log
 kubectl create rolebinding dev-pod-creator -n ctf --role=pod-creator --serviceaccount=ctf:dev
 
-DEV="--as=system:serviceaccount:ctf:dev -n ctf"
-kubectl auth can-i get secrets $DEV     # no
-kubectl get secret flag $DEV            # Forbidden ✅
+DEV=(--as=system:serviceaccount:ctf:dev -n ctf)   # dizi (array): bash ve zsh'de aynı çalışır
+kubectl auth can-i get secrets "${DEV[@]}"     # no
+kubectl get secret flag "${DEV[@]}"            # Forbidden ✅
 
 # Ama dev, secret'ı MOUNT EDEN bir pod oluşturabilir → kubelet secret'ı pod'a koyar
-kubectl run steal $DEV --image=busybox:1.36 --restart=Never --overrides='
+kubectl run steal "${DEV[@]}" --image=busybox:1.36 --restart=Never --overrides='
 {"spec":{"containers":[{"name":"steal","image":"busybox:1.36","command":["cat","/s/flag"],
   "volumeMounts":[{"name":"s","mountPath":"/s"}]}],
   "volumes":[{"name":"s","secret":{"secretName":"flag"}}]}}'
 sleep 5
-kubectl logs steal $DEV
+kubectl logs steal "${DEV[@]}"
 # FLAG{create-pods-esittir-secret-okuma}  🔴
 
 kubectl delete namespace ctf
