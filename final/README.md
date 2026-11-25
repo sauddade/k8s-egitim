@@ -11,5 +11,3 @@ kubectl explain deployment.spec.template.spec.securityContext
 kubectl create deployment final-app --image=k8s-demo-app:v1 --dry-run=client -o yaml > 02-deploy.yaml
 kubectl create service clusterip final-svc --tcp=80:5000 --dry-run=client -o yaml
 ```
-
-Çözüm dosyaları final sonunda eğitmen tarafından paylaşılacaktır.
