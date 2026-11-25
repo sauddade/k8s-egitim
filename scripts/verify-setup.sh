@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 # Kurulum doğrulama (kılavuz Bölüm 7).
-# Çıktının ekran görüntüsünü eğitimden en az 3 gün önce eğitmene gönderin.
 
 echo "=== Docker ==="
 docker version --format 'Client: {{.Client.Version}}  Server: {{.Server.Version}}'
