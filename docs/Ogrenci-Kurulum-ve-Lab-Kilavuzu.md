@@ -2,7 +2,7 @@
 
 **Kubernetes Temelleri ve Uygulamalı Yönetim Eğitimi**
 
-Bu doküman katılımcıların eğitim öncesi ortam kurulumu ve eğitim sırasında eğitmenle birlikte yapacakları hands-on lab adımlarını içerir.
+Bu doküman eğitim öncesi ortam kurulumunu ve eğitim sırasında yapacağınız hands-on lab adımlarını içerir.
 
 > **🔐 Güvenlik Perspektifi:** Her lab'ın sonunda (veya içinde) **🔐** işaretli adımlar bulacaksınız. Bunlar, öğrendiğimiz Kubernetes özelliğinin saldırgan ve savunmacı açısından ne anlama geldiğini gösterir.
 
@@ -38,7 +38,7 @@ Bu doküman katılımcıların eğitim öncesi ortam kurulumu ve eğitim sıras�
 
 ## 1. KURULUM YOLUNU SEÇİN
 
-> **Amaç:** Herkes aynı komutları çalıştırabilsin. Seçilen yoldan baımsız olarak elinizde şunlar olacak: **bash terminali + Docker (CLI + engine) + minikube + kubectl + helm**. Eğitimdeki tüm komutlar bu ortamda birebir çalışır.
+> **Amaç:** Herkes aynı komutları çalıştırabilsin. Seçilen yoldan bağımsız olarak elinizde şunlar olacak: **bash terminali + Docker (CLI + engine) + minikube + kubectl + helm**. Eğitimdeki tüm komutlar bu ortamda birebir çalışır.
 
 ### 1.1 Önce Şirket Politikanızı Kontrol Edin
 
@@ -305,7 +305,7 @@ docker run --rm hello-world
 
 ```bash
 ARCH=$(dpkg --print-architecture)                      # amd64 veya arm64
-KVER=$(curl -L -s https://dl.k8s.io/release/stable.txt) # eğitmen sabit sürüm duyurursa: KVER=v1.XX.Y
+KVER=$(curl -L -s https://dl.k8s.io/release/stable.txt) # belirli bir sürüm gerekirse: KVER=v1.XX.Y
 curl -LO "https://dl.k8s.io/release/${KVER}/bin/linux/${ARCH}/kubectl"
 curl -LO "https://dl.k8s.io/release/${KVER}/bin/linux/${ARCH}/kubectl.sha256"
 
@@ -480,7 +480,7 @@ Beklenen:
 
 ---
 
-### Lab 1.1 — Docker Temel Komutları (Eğitmen demo'su ile paralel)
+### Lab 1.1 — Docker Temel Komutları
 
 ```bash
 # === Docker Engine doğrulama ===
@@ -782,7 +782,7 @@ docker compose down
 # Not: k8s-demo-app imajlarını silmeyin (Lab 1.2c ve Gün 3'te kullanılacak)
 ```
 
-> **Geçiş Notu:** Docker Compose'da `cache` servisine `http://cache` ile eriştiniz — Docker otomatik DNS ile servis adını IP'ye çevirdi. Kubernetes'te de aynı mantık vardır: Service adı DNS olarak çözümlenir. Docker Compose tek makinede çalışır, Kubernetes ise çoklu makinede. Bu benzerlik, şimdi Kubernetes'e geçişi kolaylaştıracak.
+> 💡 Docker Compose'da `cache` servisine `http://cache` ile eriştiniz — Docker otomatik DNS ile servis adını IP'ye çevirdi. Kubernetes'te de aynı mantık vardır: Service adı DNS olarak çözümlenir. Docker Compose tek makinede çalışır, Kubernetes ise çoklu makinede. Bu benzerlik, şimdi Kubernetes'e geçişi kolaylaştıracak.
 
 ---
 
@@ -1116,7 +1116,7 @@ kubectl delete pod bad-pod crash-pod
 
 ---
 
-### Lab 1.10 — Gün 1 Entegre Uygulama 
+### Lab 1.10 — Gün 1 Entegre Uygulama
 
 ```bash
 cd ~/k8s-lab/day1
@@ -1516,7 +1516,7 @@ kubectl run check-dns --rm -it --image=nicolaka/netshoot:v0.13 --restart=Never -
 #   search gun2.svc.cluster.local svc.cluster.local cluster.local
 #   options ndots:5
 
-# === DNS DEBUGGING (eğitmen ile birlikte) ===
+# === DNS DEBUGGING ===
 
 # CoreDNS çalışıyor mu?
 kubectl get pods -n kube-system -l k8s-app=kube-dns
@@ -1846,7 +1846,7 @@ kubectl delete pv static-pv
 
 ### Lab 2.9b — StatefulSet ile Kalıcı Veriye Sahip Uygulama
 
-> **Geçiş:** PVC'yi tek bir Pod'a bağladık. Ama gerçek bir veritabanı cluster'ı çalıştırırken her Pod'un kendi diski olmalı ve sıralı başlamalıdır. StatefulSet bunu sağlar — PV/PVC ile Deployment mantığını birleştirir.
+> 💡 PVC'yi tek bir Pod'a bağladık. Ama gerçek bir veritabanı cluster'ı çalıştırırken her Pod'un kendi diski olmalı ve sıralı başlamalıdır. StatefulSet bunu sağlar — PV/PVC ile Deployment mantığını birleştirir.
 
 ```bash
 cd ~/k8s-lab/day2
@@ -3106,7 +3106,7 @@ kubectl delete namespace psa-demo hostpath-demo
 
 ## 11. FİNAL SENARYOSU
 
-### Uçtan Uca Görev: "Güvenli Bir Uygulamayı Canlıya Al" 
+### Uçtan Uca Görev: "Güvenli Bir Uygulamayı Canlıya Al"
 
 
 **Senaryo:** Şirketiniz `k8s-demo-app` uygulamasını Kubernetes'e taşıyor. Güvenlik ekibi olarak hem uygulamayı kurmanız hem de **en az yetki (least privilege)** ilkesine uygun olduğunu kanıtlamanız gerekiyor.
@@ -3121,17 +3121,17 @@ mkdir -p ~/k8s-lab/final && cd ~/k8s-lab/final
 - Aktif context'in namespace'ini `final-project` yapın
 > 💡 Lab 3.9 — `kubectl label namespace ...`
 
-#### Görev 2 — Kimlik 
+#### Görev 2 — Kimlik
 - `final-sa` ServiceAccount'u; token'ı **otomatik mount edilmesin**
 > 💡 ServiceAccount YAML'ında `automountServiceAccountToken: false`
 
-#### Görev 3 — Konfigürasyon, Sır ve Disk (5 dk)
+#### Görev 3 — Konfigürasyon, Sır ve Disk
 - ConfigMap `app-config`: `APP_COLOR=lightyellow`
 - Secret `app-secret`: `DB_PASSWORD=<kendi belirlediğiniz>`
 - PVC `app-data`: 1Gi, ReadWriteOnce, `standard`
 > 💡 Secret'ı `stringData:` ile yazarsanız base64'e çevirmeniz gerekmez
 
-#### Görev 4 — Deployment 
+#### Görev 4 — Deployment
 
 `final-app` Deployment'ı şu gereksinimleri karşılamalı:
 
@@ -3152,12 +3152,12 @@ mkdir -p ~/k8s-lab/final && cd ~/k8s-lab/final
 > 💡 Secret'ı dosya olarak mount ederken `defaultMode: 0440` kullanın (fsGroup sayesinde 10001 kullanıcısı okuyabilir).
 > ❓ Neden env değil dosya? Env değişkenleri `exec`, alt process'ler, crash dump'lar ve hatalı loglama ile sızar; dosya olarak verilen Secret güncellenebilir ve erişimi dosya izinleriyle sınırlanabilir.
 
-#### Görev 5 — Service + Ingress 
+#### Görev 5 — Service + Ingress
 - ClusterIP Service `final-svc`: port 80 → targetPort 5000
 - Ingress `final-ingress`: `ingressClassName: nginx`, host `final.local`, path `/` → `final-svc:80`
 > 💡 Test: `kubectl port-forward -n ingress-nginx svc/ingress-nginx-controller 8081:80` ve `curl -H "Host: final.local" http://localhost:8081`
 
-#### Görev 6 — Helm ile Yardımcı Servis 
+#### Görev 6 — Helm ile Yardımcı Servis
 - `podinfo/podinfo` chart'ını **`podinfo`** release adıyla, bir **values dosyası** ile kurun:
   - `ui.message`: kendi mesajınız
   - `redis.enabled: true`
@@ -3165,7 +3165,7 @@ mkdir -p ~/k8s-lab/final && cd ~/k8s-lab/final
 - Kurulum sırasında çıkan PodSecurity **uyarılarını not edin** — neden kurulum yine de başarılı oldu?
 > 💡 `kubectl get svc,pods --show-labels` ile Redis Service adını ve pod label'larını doğrulayın (NetworkPolicy için lazım olacak)
 
-#### Görev 7 — NetworkPolicy: Sıfır Güven 
+#### Görev 7 — NetworkPolicy: Sıfır Güven
 - Namespace'te varsayılan olarak **tüm ingress ve egress kapalı**
 - Tüm pod'lar DNS'e (kube-system / kube-dns, 53 UDP+TCP) çıkabilir
 - `final-app`'e **sadece `ingress-nginx` namespace'inden** 5000/TCP gelebilir
@@ -3173,19 +3173,19 @@ mkdir -p ~/k8s-lab/final && cd ~/k8s-lab/final
 - Hiçbir pod internete çıkamaz
 > 💡 Her namespace'in otomatik label'ı: `kubernetes.io/metadata.name: <ad>`
 
-#### Görev 8 — RBAC: Operatör Rolü 
+#### Görev 8 — RBAC: Operatör Rolü
 - `dev-team` grubu için `final-operator` Role + RoleBinding:
   - pod, pod log, service, configmap, event, pvc: **okuma**
   - deployment, replicaset: okuma; deployment: **patch/update** (rollout için)
   - **secrets YOK, pods/exec YOK, pods/portforward YOK**
 > 💡 Lab 2.10b — `subjects: - kind: Group`
 
-#### Görev 9 — Güncelleme ve Hatalı Sürümden Dönüş 
+#### Görev 9 — Güncelleme ve Hatalı Sürümden Dönüş
 - `v2`'ye güncelleyin, `change-cause` ekleyin
 - `v3-bad`'e güncelleyin → rollout'un takıldığını **ve kullanıcıların etkilenmediğini** gösterin
 - Rollback yapın (son durum: v2)
 
-#### Görev 10 — Güvenlik Denetimi: Kanıtlayın 
+#### Görev 10 — Güvenlik Denetimi: Kanıtlayın
 Aşağıdaki doğrulama komutlarını çalıştırın — **tüm beklenen sonuçları** almalısınız.
 
 ### Doğrulama Komutları
