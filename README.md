@@ -24,7 +24,7 @@
    bash scripts/start-cluster.sh          # 8 GB RAM'li makinede: bash scripts/start-cluster.sh dusuk
    docker login                           # ücretsiz Docker Hub hesabı
    bash scripts/preload-images.sh
-   bash scripts/verify-setup.sh           # çıktının ekran görüntüsünü eğitmene gönderin
+   bash scripts/verify-setup.sh          
    ```
 
 > **Windows Yol C (Git Bash + Hyper-V/VirtualBox):** `MINIKUBE_DRIVER=hyperv bash scripts/start-cluster.sh` (veya `virtualbox`).
